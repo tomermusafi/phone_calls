@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,106 +22,132 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 public class CallReceiver extends PhonecallReceiver {
 
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private LocationRequest locationRequest;
-    private LocationCallback locationCallback = new LocationCallback() {
-
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            super.onLocationResult(locationResult);
-
-            if (locationResult.getLastLocation() != null) {
-                newLocation(locationResult.getLastLocation());
-            } else {
-                Log.d("pttt", "Location information isn't available.");
-            }
-        }
-        @Override
-        public void onLocationAvailability(LocationAvailability locationAvailability) {
-            super.onLocationAvailability(locationAvailability);
-            //Toast.makeText(this, "Loc= " + locationAvailability.isLocationAvailable(), Toast.LENGTH_SHORT).show();
-            Log.d("pttt", "Loc = "+locationAvailability.isLocationAvailable());
-            locationAvailability.isLocationAvailable();
-        }
-    };
+    private String callId;
+    private long start;
+    private long end;
+    private long callDuration;
+    private String date;
+    private String otherPhoneNumber;
+    private String otherName;
+    private String callStatus;
 
     @Override
     protected void onIncomingCallReceived(Context ctx, String number, Date start)
     {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String strDate = dateFormat.format(start);
+        this.date = strDate;
+
+        this.callId = UUID.randomUUID().toString();
+
+        this.callStatus = CallStatus.INCOMING_CALL.toString();
+
+        if(number != null){
+            this.otherPhoneNumber = number;
+        }else{
+            this.otherPhoneNumber = "none";
+        }
+
+        CallInfo callInfo = new CallInfo()
+                .setCallId(this.callId).setCallStatus(this.callStatus)
+                .setDate(this.date)
+                .setOtherPhoneNumber(this.otherPhoneNumber)
+                .setOtherName("none");
+
+        CurrentLocation.startRecording(ctx, callInfo);
+
         Log.d("pttt", "onIncomingCallReceived ");
-        startRecording(ctx);
+        Log.d("pttt", "number = " + number);
+
+//        TelephonyManager telephony = (TelephonyManager)ctx.getSystemService(Context.TELEPHONY_SERVICE);
+//        telephony.listen(new PhoneStateListener(){
+//            @Override
+//            public void onCallStateChanged(int state, String incomingNumber) {
+//                super.onCallStateChanged(state, incomingNumber);
+//                //System.out.println("incomingNumber : "+incomingNumber);
+//                Log.d("pttt", "numberrrrrrr = " + incomingNumber);
+//            }
+//        },PhoneStateListener.LISTEN_CALL_STATE);
     }
 
     @Override
     protected void onIncomingCallAnswered(Context ctx, String number, Date start)
     {
-
+        this.start = start.getTime();
+        Log.d("pttt", "onIncomingCallAnswered ");
+        Log.d("pttt", "number = " + number);
     }
 
     @Override
     protected void onIncomingCallEnded(Context ctx, String number, Date start, Date end)
     {
         Log.d("pttt", "onIncomingCallEnded");
-        stopRecording();
+        this.end = end.getTime();
+        this.callDuration = this.end - this.start;
+
+        CurrentLocation.stopRecording(ctx, callDuration / (1000 * 60 * 60 * 24));
+        Log.d("pttt", "number = " + number);
     }
 
     @Override
     protected void onOutgoingCallStarted(Context ctx, String number, Date start)
     {
+        Log.d("pttt", "onOutgoingCallStarted ");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String strDate = dateFormat.format(start);
+        this.date = strDate;
 
+        this.callId = UUID.randomUUID().toString();
+
+        this.callStatus = CallStatus.OUTGOING_CALL.toString();
+
+        if(number != null){
+            this.otherPhoneNumber = number;
+        }else{
+            this.otherPhoneNumber = "none";
+        }
+
+        CallInfo callInfo = new CallInfo()
+                .setCallId(this.callId).setCallStatus(this.callStatus)
+                .setDate(this.date)
+                .setOtherPhoneNumber(this.otherPhoneNumber)
+                .setOtherName("none");
+
+        CurrentLocation.startRecording(ctx, callInfo);
+
+
+        Log.d("pttt", "number = " + number);
     }
 
     @Override
     protected void onOutgoingCallEnded(Context ctx, String number, Date start, Date end)
     {
+        Log.d("pttt", "onOutgoingCallEnded ");
+        this.end = end.getTime();
+        this.callDuration = this.end - this.start;
 
+        CurrentLocation.stopRecording(ctx, callDuration / (1000 * 60 * 60 * 24));
+        Log.d("pttt", "number = " + number);
     }
 
     @Override
     protected void onMissedCall(Context ctx, String number, Date start)
     {
 
+        CurrentLocation.stopRecording(ctx, 0);
+        Log.d("pttt", "onMissedCall ");
+        Log.d("pttt", "number = " + number);
     }
 
-    private void newLocation(Location lastLocation) {
-        Log.d("pttt", "lat = "+lastLocation.getLatitude() +" lng = "+ lastLocation.getLongitude());
-    }
 
-    private void stopRecording() {
-        if (fusedLocationProviderClient != null) {
-            Task<Void> task = fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-            task.addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        Log.d("pttt", "stop Location Callback removed.");
-                        //stopSelf();
-                    } else {
-                        Log.d("pttt", "stop Failed to remove Location Callback.");
-                    }
-                }
-            });
-        }
-    }
 
-    private void startRecording(Context context) {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
 
-        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationRequest = new LocationRequest();
-            locationRequest.setSmallestDisplacement(1.0f);
-            locationRequest.setInterval(5000);
-            locationRequest.setFastestInterval(5000);
-            //locationRequest.setMaxWaitTime(TimeUnit.MINUTES.toMillis(2));
-            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        }
-
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
-    }
 
 }
