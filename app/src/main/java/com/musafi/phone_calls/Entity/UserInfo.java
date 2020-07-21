@@ -1,17 +1,17 @@
-package com.musafi.phone_calls;
+package com.musafi.phone_calls.Entity;
 
-import java.util.ArrayList;
+
 import java.util.Map;
 
 public class UserInfo {
     private String userId;
     private String userPhoneNumber;
     private Map<String,String> userContacts;
-    private ArrayList<CallInfo> userCallsInfo;
+    private Map<String, CallInfo> userCallsInfo;
     private String userName;
 
 
-    public UserInfo(String userId, String userPhoneNumber, Map<String, String> userContacts, ArrayList<CallInfo> userCallsInfo, String userName) {
+    public UserInfo(String userId, String userPhoneNumber, Map<String, String> userContacts, Map<String,CallInfo> userCallsInfo, String userName) {
         this.userPhoneNumber = userPhoneNumber;
         this.userContacts = userContacts;
         this.userCallsInfo = userCallsInfo;
@@ -49,11 +49,11 @@ public class UserInfo {
         return this;
     }
 
-    public ArrayList<CallInfo> getUserCallsInfo() {
+    public Map<String,CallInfo> getUserCallsInfo() {
         return userCallsInfo;
     }
 
-    public UserInfo setUserCallsInfo(ArrayList<CallInfo> userCallsInfo) {
+    public UserInfo setUserCallsInfo(Map<String,CallInfo> userCallsInfo) {
         this.userCallsInfo = userCallsInfo;
         return this;
     }

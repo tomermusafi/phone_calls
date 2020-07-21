@@ -1,4 +1,4 @@
-package com.musafi.phone_calls;
+package com.musafi.phone_calls.Utils;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -17,6 +17,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.musafi.phone_calls.Entity.CallInfo;
 
 public class CurrentLocation {
     private static CallInfo callInfo;
@@ -79,10 +80,12 @@ public class CurrentLocation {
     }
 
     private static void newLocation(Location lastLocation) {
-        callInfo.setCallLocation(new MyLoc()
-                .setLatitude(lastLocation.getLatitude())
-                .setLongitude(lastLocation.getLongitude())
-                .setSpeed(lastLocation.getSpeed()));
+        callInfo.setmLatitude(lastLocation.getLatitude()).setmLongitude(lastLocation.getLongitude());
+
+//        callInfo.setCallLocation(new MyLoc()
+//                .setLatitude(lastLocation.getLatitude())
+//                .setLongitude(lastLocation.getLongitude())
+//                .setSpeed(lastLocation.getSpeed()));
         Log.d("pttt", "lat = "+lastLocation.getLatitude() +" lng = "+ lastLocation.getLongitude());
 
     }

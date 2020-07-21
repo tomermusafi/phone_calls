@@ -1,4 +1,4 @@
-package com.musafi.phone_calls;
+package com.musafi.phone_calls.Entity;
 
 import android.annotation.SuppressLint;
 import android.location.Location;

@@ -1,4 +1,4 @@
-package com.musafi.phone_calls;
+package com.musafi.phone_calls.Receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

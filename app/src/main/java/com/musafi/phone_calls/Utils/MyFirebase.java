@@ -1,4 +1,4 @@
-package com.musafi.phone_calls;
+package com.musafi.phone_calls.Utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -6,9 +6,8 @@ import android.provider.Settings;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.Gson;
-
-import java.util.UUID;
+import com.musafi.phone_calls.Entity.CallInfo;
+import com.musafi.phone_calls.Entity.UserInfo;
 
 public class MyFirebase {
 
@@ -27,7 +26,7 @@ public class MyFirebase {
         @SuppressLint("HardwareIds") String android_id = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         //String uuid = UUID.randomUUID().toString();
-        myRef.child("Users").child(android_id).child("userCallsInfo").child(callInfo.getCallId()).child("call_info").setValue(callInfo);
+        myRef.child("Users").child(android_id).child("userCallsInfo").child(callInfo.getCallId()).setValue(callInfo);
         //myRef.child("Users").child(android_id).child("userCallsInfo").child(uuid).child("call_info").child("myLoc").setValue(callInfo.getCallLocation());
     }
 }

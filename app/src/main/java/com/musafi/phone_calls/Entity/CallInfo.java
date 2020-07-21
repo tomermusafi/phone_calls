@@ -1,24 +1,28 @@
-package com.musafi.phone_calls;
+package com.musafi.phone_calls.Entity;
 
 
 
-class CallInfo {
+public class CallInfo {
     private String callId;
     private long callDuration;
     private String date;
     private String otherPhoneNumber;
     private String otherName;
     private String callStatus;
-    private MyLoc callLocation;
+    private double mLatitude = 0.0;
+    private double mLongitude = 0.0;
+    //private MyLoc callLocation;
 
-    public CallInfo(long callDuration, String date, String otherPhoneNumber, String otherName, String callStatus, MyLoc callLocation, String callId) {
+    public CallInfo(double mLatitude, double mLongitude, long callDuration, String date, String otherPhoneNumber, String otherName, String callStatus, String callId) {
         this.callDuration = callDuration;
         this.date = date;
         this.otherPhoneNumber = otherPhoneNumber;
         this.otherName = otherName;
         this.callStatus = callStatus;
-        this.callLocation = callLocation;
+        //this.callLocation = callLocation;
         this.callId = callId;
+        this.mLatitude = mLatitude;
+        this.mLongitude = mLongitude;
     }
 
     public CallInfo() {
@@ -60,14 +64,31 @@ class CallInfo {
         return this;
     }
 
-    public MyLoc getCallLocation() {
-        return callLocation;
+    public double getmLatitude() {
+        return mLatitude;
     }
 
-    public CallInfo setCallLocation(MyLoc callLocation) {
-        this.callLocation = callLocation;
+    public CallInfo setmLatitude(double mLatitude) {
+        this.mLatitude = mLatitude;
         return this;
     }
+
+    public double getmLongitude() {
+        return mLongitude;
+    }
+
+    public CallInfo setmLongitude(double mLongitude) {
+        this.mLongitude = mLongitude;
+        return this;
+    }
+//    public MyLoc getCallLocation() {
+//        return callLocation;
+//    }
+//
+//    public CallInfo setCallLocation(MyLoc callLocation) {
+//        this.callLocation = callLocation;
+//        return this;
+//    }
 
     public String getOtherName() {
         return otherName;

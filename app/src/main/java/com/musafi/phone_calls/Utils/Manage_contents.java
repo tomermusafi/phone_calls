@@ -1,4 +1,4 @@
-package com.musafi.phone_calls;
+package com.musafi.phone_calls.Utils;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -18,12 +18,14 @@ import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.util.ArrayList;
+import com.musafi.phone_calls.Entity.UserInfo;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Manage_contents {
     static final String MY_PERMISSION = Manifest.permission.READ_CONTACTS;
+    static MySharedPreferences msp;
 
     public static void readContacts(final Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -88,13 +90,17 @@ public class Manage_contents {
     public static void initUserInfo(Map<String,String> contact, Context context){
         @SuppressLint("HardwareIds") String android_id = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
+        msp = new MySharedPreferences(context);
+
+
         UserInfo userInfo = new UserInfo()
-                .setUserName("")
+                .setUserName(msp.getString("name", "none"))
                 .setUserId(android_id)
                 .setUserContacts(contact)
-                .setUserPhoneNumber("")
-                .setUserCallsInfo(new ArrayList<CallInfo>());
+                .setUserPhoneNumber(msp.getString("number", "none"))
+                ;
 
         MyFirebase.saveDataInFirebase(userInfo);
     }
+
 }

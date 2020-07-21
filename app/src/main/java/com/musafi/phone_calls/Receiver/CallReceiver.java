@@ -1,26 +1,12 @@
-package com.musafi.phone_calls;
+package com.musafi.phone_calls.Receiver;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.os.Looper;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.musafi.phone_calls.Entity.CallInfo;
+import com.musafi.phone_calls.Entity.CallStatus;
+import com.musafi.phone_calls.Utils.CurrentLocation;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,8 +27,8 @@ public class CallReceiver extends PhonecallReceiver {
     @Override
     protected void onIncomingCallReceived(Context ctx, String number, Date start)
     {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        String strDate = dateFormat.format(start);
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("YYYY/MM/dd hh:mm:ss a");
+        String strDate = dateFormat.format(new Date(System.currentTimeMillis()));
         this.date = strDate;
 
         this.callId = UUID.randomUUID().toString();
@@ -92,7 +78,7 @@ public class CallReceiver extends PhonecallReceiver {
         this.end = end.getTime();
         this.callDuration = this.end - this.start;
 
-        CurrentLocation.stopRecording(ctx, callDuration / (1000 * 60 * 60 * 24));
+        CurrentLocation.stopRecording(ctx, (callDuration / (1000*1000*1000))/1000);
         Log.d("pttt", "number = " + number);
     }
 
@@ -100,8 +86,9 @@ public class CallReceiver extends PhonecallReceiver {
     protected void onOutgoingCallStarted(Context ctx, String number, Date start)
     {
         Log.d("pttt", "onOutgoingCallStarted ");
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        String strDate = dateFormat.format(start);
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("YYYY/MM/dd hh:mm:ss a");
+        String strDate = dateFormat.format(new Date(System.currentTimeMillis()));
+        Log.d("pttt", "time: "  + strDate);
         this.date = strDate;
 
         this.callId = UUID.randomUUID().toString();
@@ -133,7 +120,7 @@ public class CallReceiver extends PhonecallReceiver {
         this.end = end.getTime();
         this.callDuration = this.end - this.start;
 
-        CurrentLocation.stopRecording(ctx, callDuration / (1000 * 60 * 60 * 24));
+        CurrentLocation.stopRecording(ctx, (callDuration / (1000*1000*1000))/1000);
         Log.d("pttt", "number = " + number);
     }
 
